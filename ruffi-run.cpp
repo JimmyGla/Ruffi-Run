@@ -70,13 +70,13 @@ int main()
     dustBunnies[i].frame = 0;
     dustBunnies[i].runningTime = 0.0;
     dustBunnies[i].updateTime = 1.0 / 16.0;
-    if (i == 0) 
+    if (i == 0)
     {
       dustBunnies[i].pos.x = windowDimensions[0] + 300;
     }
     else
     {
-      dustBunnies[i].pos.x = dustBunnies[i-1].pos.x + GetRandomValue(250, 450);
+      dustBunnies[i].pos.x = dustBunnies[i - 1].pos.x + GetRandomValue(250, 450);
     }
   }
 
@@ -92,7 +92,7 @@ int main()
   ruffiData.rec.height = ruffi.height;
   ruffiData.rec.x = 0;
   ruffiData.rec.y = 0;
-  ruffiData.pos.x = (windowDimensions[0]  - ruffiData.rec.width) / 4;
+  ruffiData.pos.x = (windowDimensions[0] - ruffiData.rec.width) / 4;
   ruffiData.pos.y = windowDimensions[1] - ruffiData.rec.height;
   ruffiData.frame = 0;
   ruffiData.updateTime = 1.0 / 12.0;
@@ -108,19 +108,32 @@ int main()
   float backgroundScale = 2.0;
 
   Texture2D background = LoadTexture("textures/far-buildings.png");
-  float bgX{}; 
+  float bgX{};
   Texture2D midground = LoadTexture("textures/back-buildings.png");
   float mgX{};
   Texture2D foreground = LoadTexture("textures/foreground.png");
   float fgX{};
- 
-  bool collision{};  
+  Texture2D title = LoadTexture("textures/ruffi-run-image.png");
+
+  bool collision{};
 
   Sound catSounds[4];
   catSounds[0] = LoadSound("sound/cat-purr-meow-8327.wav");
   catSounds[1] = LoadSound("sound/cat-growl-96248.wav");
   catSounds[2] = LoadSound("sound/cat-3-43850.wav");
   catSounds[3] = LoadSound("sound/angry-cat-meow-82091.wav");
+
+  while (!IsKeyPressed(KEY_SPACE) && !WindowShouldClose())
+  {
+    BeginDrawing();
+    ClearBackground(WHITE);
+    Vector2 titlePos{bgX, 0.0};
+    DrawTextureEx(title, titlePos, 0.0, 0.5f, WHITE);
+
+    DrawText("PRESS SPACE", windowDimensions[0] / 6, windowDimensions[1] / 4 * 3, 42, RED);
+
+    EndDrawing();
+  }
 
   SetTargetFPS(60);
   while (!WindowShouldClose())
@@ -187,12 +200,12 @@ int main()
     }
 
     // jump check
-    if(IsKeyPressed(KEY_SPACE) && !isInAir)
+    if (IsKeyPressed(KEY_SPACE) && !isInAir)
     {
       velocity += jumpVel;
       PlaySound(catSounds[GetRandomValue(0, 3)]);
     }
-   
+
     for (int i = 0; i < sizeOfDustBunnies; i++)
     {
       // update each dustBunny position
@@ -204,8 +217,8 @@ int main()
 
     // update ruffi position
     ruffiData.pos.y += velocity * dT;
-    
-    //update ruffi's animation frame
+
+    // update ruffi's animation frame
     if (!isInAir)
     {
       ruffiData = updateAnimData(ruffiData, dT, 7);
@@ -221,17 +234,15 @@ int main()
     {
       float pad{50};
       Rectangle nebRec{
-        dustBunny.pos.x + pad,
-        dustBunny.pos.y + pad,
-        dustBunny.rec.width - 2 * pad,
-        dustBunny.rec.height - 2 * pad
-      };
+          dustBunny.pos.x + pad,
+          dustBunny.pos.y + pad,
+          dustBunny.rec.width - 2 * pad,
+          dustBunny.rec.height - 2 * pad};
       Rectangle ruffiRec{
-        ruffiData.pos.x,
-        ruffiData.pos.y,
-        ruffiData.rec.width,
-        ruffiData.rec.height
-      };
+          ruffiData.pos.x,
+          ruffiData.pos.y,
+          ruffiData.rec.width,
+          ruffiData.rec.height};
       if (CheckCollisionRecs(nebRec, ruffiRec))
       {
         collision = true;
@@ -268,6 +279,7 @@ int main()
   UnloadTexture(background);
   UnloadTexture(midground);
   UnloadTexture(foreground);
+  UnloadTexture(title);
   UnloadSound(catSounds[0]);
   UnloadSound(catSounds[1]);
   UnloadSound(catSounds[2]);
